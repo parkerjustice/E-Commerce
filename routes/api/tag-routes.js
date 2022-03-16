@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     ]
   })
 //impportant that you are able to get all the tags
-.then(TagData => res.json(TagData))
+.then(TagDataDB => res.json(TagDataDB))
 .catch(err => {
   console.log(err);
   res.status(500).json(err);
@@ -31,12 +31,12 @@ Tag.findOne({
     }
   ]
 })
-.then(dbTagData => {
-  if (!dbTagData) {
+.then(TagDataDB => {
+  if (!TagDataDB) {
     res.status(404).json({ message: 'This ID has shown nothing'});
     return;
   }
-  res.json(dbTagData);
+  res.json(TagDataDB);
 })
 .catch(err => {
   console.log(err);
@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
   Tag.create({
     tag_name: req.body.tag_name
   })
-    .then(dbTagData => res.json(dbTagData))
+    .then(TagDataDB => res.json(TagDataDB))
     .catch(err => {
         console.log(err);
         res.status(500).json(err);
@@ -62,10 +62,36 @@ router.put('/:id', (req, res) => {
      id: req.params.i }
     }
   )
+  .then(TagDataDB => {
+    if (!TagDataDB) {
+        res.status(404).json({ message: 'This ID has shown nothing' });
+        return;
+    }
+    res.json(TagDataDB);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+  Tag.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  .then(TagDataDB => {
+    if (!TagDataDB) {
+        res.status(404).json({ message: 'This ID has shown nothing' });
+        return;
+    }
+    res.json(TagDataDB);
+    })
+    .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
 });
 
 module.exports = router;
